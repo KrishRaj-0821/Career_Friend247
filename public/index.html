@@ -2202,6 +2202,50 @@ html, body { height: 100%; overflow-x: hidden; }
                 showNotification('Failed to start application. Please refresh the page.', 'error');
             }
         });
+		// Wait for DOM to be ready, then attach event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('DOM loaded, attaching button listeners...');
+    
+    // Find and attach Sign In button (more specific selectors)
+    const signInButton = document.querySelector('button[onclick*="showAuthForm"]') || 
+                        document.querySelector('button[onclick*="login"]') ||
+                        document.querySelector('.sign-in-btn') ||
+                        document.getElementById('signInBtn') ||
+                        Array.from(document.querySelectorAll('button')).find(btn => 
+                            btn.textContent.includes('Sign In'));
+    
+    if (signInButton) {
+        signInButton.removeAttribute('onclick'); // Remove old onclick
+        signInButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Sign In clicked');
+            showAuthForm('login');
+        });
+        console.log('Sign In button listener attached');
+    } else {
+        console.error('Sign In button not found');
+    }
+    
+    // Find and attach Create Account button
+    const createAccountButton = Array.from(document.querySelectorAll('button')).find(btn => 
+        btn.textContent.includes('Create an Account') || 
+        btn.textContent.includes('Create Account')) ||
+        document.querySelector('.create-account-btn') ||
+        document.getElementById('createAccountBtn');
+    
+    if (createAccountButton && createAccountButton !== signInButton) {
+        createAccountButton.removeAttribute('onclick'); // Remove old onclick
+        createAccountButton.addEventListener('click', function(e) {
+            e.preventDefault();
+            console.log('Create Account clicked');
+            showAuthForm('signup');
+        });
+        console.log('Create Account button listener attached');
+    } else {
+        console.error('Create Account button not found or same as Sign In');
+    }
+});
+
 
         // --- MAKE FUNCTIONS GLOBALLY AVAILABLE FOR HTML ONCLICK HANDLERS ---
         window.showStep = showStep;
