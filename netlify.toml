@@ -40,3 +40,5 @@
       connect-src 'self' https://generativelanguage.googleapis.com https://*.firebaseapp.com https://*.firebase.com;
       img-src 'self' data: https: blob:;
     """
+
+
