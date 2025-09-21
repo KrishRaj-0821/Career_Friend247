@@ -2230,6 +2230,16 @@ html, body { height: 100%; overflow-x: hidden; }
         window.saveUserData = saveUserData;
         window.callGeminiAPI = callGeminiAPI;
         window.showNotification = showNotification;
+		// At the end of your script, after all function definitions, add:
+// Make functions globally available for onclick handlers
+		window.showAuthForm = showAuthForm;
+		window.handleLogin = handleLogin;
+		window.handleSignup = handleSignup;
+		window.showStep = showStep;
+		window.openChat = openChat;
+		window.submitTicket = submitTicket;
+// ... add any other functions your buttons call
+
 
         console.log('🎉 Career Friend application ready with all features and secure configuration!');
 
