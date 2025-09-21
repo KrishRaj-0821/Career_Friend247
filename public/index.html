@@ -1,0 +1,2243 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Career Friend - Your Career Path</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.12/cropper.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+
+/* Prevent empty scroll caused by 100vh + padding and avoid horizontal overflow */
+html, body { height: 100%; overflow-x: hidden; }
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #111827; /* bg-gray-900 */
+            color: #ffffff; /* text-white */
+        }
+        .step-card {
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+        /* Custom transition for smooth step changes */
+        .step-container {
+            transition: opacity 0.5s ease-in-out, transform 0.5s ease-in-out;
+        }
+        .step-hidden {
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
+            position: absolute;
+            width: 100%;
+        }
+        .step-visible {
+            opacity: 1;
+            transform: translateY(0);
+            position: relative;
+        }
+        /* Custom radio button styles */
+        .role-radio-label {
+            transition: all 0.3s ease;
+        }
+        .role-radio:checked + .role-radio-label {
+            border-color: #4f46e5;
+            background-color: rgba(79, 70, 229, 0.1);
+            color: #4f46e5;
+            font-weight: 600;
+        }
+         /* Custom card hover effect */
+        .choice-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .choice-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        .animate-blob {
+            animation: blob 7s infinite;
+        }
+        .animation-delay-2000 {
+            animation-delay: 2s;
+        }
+        .animation-delay-4000 {
+            animation-delay: 4s;
+        }
+        @keyframes blob {
+	        0% { transform: translate(0px, 0px) scale(1); }
+	        33% { transform: translate(30px, -50px) scale(1.1); }
+	        66% { transform: translate(-20px, 20px) scale(0.9); }
+	        100% { transform: translate(0px, 0px) scale(1); }
+        }
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 5px solid #FFF;
+            border-bottom-color: #6366F1;
+            border-radius: 50%;
+            display: inline-block;
+            box-sizing: border-box;
+            animation: rotation 1s linear infinite;
+        }
+        @keyframes rotation {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* Custom scrollbar for webkit browsers */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1f2937; }
+        ::-webkit-scrollbar-thumb { background: #4f46e5; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #4338ca; }
+        
+        /* Feedback Stars */
+        .feedback-stars svg { cursor: pointer; transition: color 0.2s; }
+        
+        /* Video Modal */
+        #video-modal-content { aspect-ratio: 16 / 9; }
+
+        /* Career Tree Graph Styles */
+        .tree { display: flex; justify-content: center; overflow-x: auto; padding-bottom: 20px; }
+        .tree ul { padding-top: 20px; position: relative; transition: all 0.5s; white-space: nowrap; }
+        .tree li { display: inline-block; vertical-align: top; text-align: center; list-style-type: none; position: relative; padding: 20px 10px 0 10px; transition: all 0.5s; }
+        .tree li::before, .tree li::after { content: ''; position: absolute; top: 0; right: 50%; border-top: 2px solid #4b5563; width: 50%; height: 20px; }
+        .tree li::after { right: auto; left: 50%; border-left: 2px solid #4b5563; }
+        .tree li:only-child::after, .tree li:only-child::before { display: none; }
+        .tree li:only-child { padding-top: 0; }
+        .tree li:first-child::before, .tree li:last-child::after { border: 0 none; }
+        .tree li:last-child::before { border-right: 2px solid #4b5563; border-radius: 0 5px 0 0; }
+        .tree li:first-child::after { border-radius: 5px 0 0 0; }
+        .tree ul ul::before { content: ''; position: absolute; top: 0; left: 50%; border-left: 2px solid #4b5563; width: 0; height: 20px; }
+        .tree li .tree-node { border: 2px solid #8b5cf6; padding: 12px 16px; text-decoration: none; color: #e5e7eb; background-color: #1f2937; display: inline-block; border-radius: 8px; transition: all 0.5s; min-width: 180px; max-width: 250px; white-space: normal; }
+        .tree li .tree-node:hover { background: #8b5cf6; color: #fff; }
+        .tree-node .title { font-weight: 700; font-size: 0.9rem; }
+        .tree-node .outcomes, .tree-node .jobs { font-size: 0.8rem; color: #d1d5db; margin-top: 8px; border-top: 1px solid #4b5563; padding-top: 8px; text-align: left; }
+        .tree-node .outcomes ul, .tree-node .jobs ul { list-style-type: disc; padding-left: 1.2rem; }
+        .tree-node .jobs { color: #c4b5fd; }
+        
+        /* Progress Tracker Styles */
+        .task-item.completed p {
+            text-decoration: line-through;
+            opacity: 0.6;
+        }
+
+        /* Confetti */
+        .confetti-piece {
+            position: absolute;
+            width: 8px;
+            height: 16px;
+            background: #ffd300;
+            top: 0;
+            opacity: 0;
+            animation: confetti-fall 3s ease-out forwards;
+        }
+        @keyframes confetti-fall {
+            0% { top: -10%; opacity: 1; transform: rotate(0deg); }
+            100% { top: 110%; opacity: 1; transform: rotate(720deg); }
+        }
+
+        /* Top Notification Bar */
+        #top-notification-bar {
+            transition: transform 0.5s ease-in-out;
+            transform: translateY(-100%);
+        }
+        #top-notification-bar.show {
+            transform: translateY(0);
+        }
+
+        /* Profile picture cropper */
+        #cropper-container img {
+            max-width: 100%;
+        }
+
+    </style>
+</head>
+<body class="bg-gray-900 text-white">
+    
+    <!-- Top Notification Bar -->
+    <div id="top-notification-bar" class="fixed top-0 left-0 right-0 bg-indigo-600 text-white p-3 text-center shadow-lg z-50">
+        <span id="top-notification-message"></span>
+        <button onclick="this.parentElement.classList.remove('show')" class="absolute top-1/2 right-4 -translate-y-1/2 font-bold text-lg">&times;</button>
+    </div>
+
+    <div id="theme-background-dark" class="fixed -z-10 inset-0 bg-gradient-to-br from-indigo-900 via-gray-900 to-purple-900 opacity-80">
+        <div class="absolute top-0 left-0 w-72 h-72 bg-purple-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob"></div>
+        <div class="absolute top-0 right-0 w-72 h-72 bg-indigo-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000"></div>
+        <div class="absolute bottom-0 left-1/4 w-72 h-72 bg-pink-500 rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-4000"></div>
+    </div>
+    
+    <div class="flex items-start justify-center min-h-screen p-4 md:p-6 lg:p-8 w-full box-border">
+    <main id="app-container" class="relative w-full max-w-4xl mx-auto">
+        <div id="confetti-container" class="absolute inset-0 pointer-events-none z-50 overflow-hidden"></div>
+        
+        <div id="step-welcome" class="step-container step-visible">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card text-center">
+                 <h1 data-translate="welcome_title" class="text-3xl sm:text-4xl md:text-5xl font-bold mb-2">Welcome to Career Friend</h1>
+                <p data-translate="welcome_subtitle" class="text-gray-400 mb-8">Your personalized career co-pilot.</p>
+                <div class="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
+                    <button onclick="showAuthForm('signin')" data-translate="signin_button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Sign In</button>
+                    <button onclick="showAuthForm('signup')" data-translate="create_account_button" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Create an Account</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step-signin-form" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h1 data-translate="signin_title" class="text-3xl sm:text-4xl font-bold text-center mb-8">Sign In</h1>
+                <div class="space-y-6 max-w-md mx-auto">
+                    <div>
+                        <label for="signin-email" data-translate="email_label" class="text-sm font-medium text-gray-300">Email</label>
+                        <input type="email" id="signin-email" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="you@example.com">
+                    </div>
+                     <div>
+                        <div class="flex justify-between items-center">
+                            <label for="signin-password" data-translate="password_label" class="text-sm font-medium text-gray-300">Password</label>
+                            <a href="#" onclick="handleForgotPassword(event, 'signin-email')" data-translate="forgot_password_link" class="text-sm text-indigo-400 hover:text-indigo-300">Forgot Password?</a>
+                        </div>
+                        <input type="password" id="signin-password" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="••••••••">
+                    </div>
+                    <button onclick="handleLogin()" data-translate="signin_button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Sign In</button>
+                     <button onclick="showStep('step-welcome')" data-translate="back_button" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="step-signup-form" class="step-container step-hidden">
+             <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h1 data-translate="create_account_title" class="text-3xl sm:text-4xl font-bold text-center mb-8">Create Your Account</h1>
+                <div class="space-y-5 max-w-lg mx-auto">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                        <div>
+                            <label for="signup-first-name" data-translate="first_name_label" class="text-sm font-medium text-gray-300">First Name</label>
+                            <input type="text" id="signup-first-name" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="John">
+                        </div>
+                        <div>
+                            <label for="signup-last-name" data-translate="last_name_label" class="text-sm font-medium text-gray-300">Last Name</label>
+                            <input type="text" id="signup-last-name" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Doe">
+                        </div>
+                    </div>
+                     <div>
+                        <label for="signup-phone" data-translate="phone_label" class="text-sm font-medium text-gray-300">Phone Number</label>
+                        <input type="tel" id="signup-phone" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="+1 (555) 123-4567">
+                    </div>
+                     <div>
+                        <label for="signup-email" data-translate="email_label" class="text-sm font-medium text-gray-300">Email</label>
+                        <input type="email" id="signup-email" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="you@example.com">
+                    </div>
+                     <div>
+                        <label for="signup-password" data-translate="create_password_label" class="text-sm font-medium text-gray-300">Create Password</label>
+                        <input type="password" id="signup-password" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="••••••••">
+                    </div>
+                    <div>
+                         <label for="signup-country" data-translate="country_label" class="text-sm font-medium text-gray-300">Country</label>
+                        <input type="text" id="signup-country" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="India">
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <input type="checkbox" id="terms-agree" class="bg-gray-700 border border-gray-600 rounded text-indigo-500 focus:ring-indigo-500">
+                        <label for="terms-agree" data-translate="terms_agree_label" class="text-sm text-gray-300">I agree to the <a href="#" class="text-indigo-400 hover:underline">Terms & Conditions</a></label>
+                    </div>
+
+                    <button onclick="handleSignup()" data-translate="create_account_button" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Create Account</button>
+                    
+                     <div class="relative flex py-2 items-center">
+                        <div class="flex-grow border-t border-gray-600"></div>
+                        <span class="flex-shrink mx-4 text-gray-400 text-sm">OR</span>
+                        <div class="flex-grow border-t border-gray-600"></div>
+                    </div>
+                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <button onclick="handleGoogleLogin()" class="flex items-center justify-center gap-2 w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg">
+                            <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.611,20.083H42V20H24v8h11.303c-1.649,4.657-6.08,8-11.303,8c-6.627,0-12-5.373-12-12s5.373-12,12-12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C12.955,4,4,12.955,4,24s8.955,20,20,20s20-8.955,20-20C44,22.659,43.862,21.35,43.611,20.083z"></path><path fill="#FF3D00" d="M6.306,14.691l6.571,4.819C14.655,15.108,18.961,12,24,12c3.059,0,5.842,1.154,7.961,3.039l5.657-5.657C34.046,6.053,29.268,4,24,4C16.318,4,9.656,8.337,6.306,14.691z"></path><path fill="#4CAF50" d="M24,44c5.166,0,9.86-1.977,13.409-5.192l-6.19-5.238C29.211,35.091,26.715,36,24,36c-5.202,0-9.619-3.317-11.283-7.946l-6.522,5.025C9.505,39.556,16.227,44,24,44z"></path><path fill="#1976D2" d="M43.611,20.083H42V20H24v8h11.303c-0.792,2.237-2.231,4.166-4.087,5.574l6.19,5.238C42.022,35.424,44,30.036,44,24C44,22.659,43.862,21.35,43.611,20.083z"></path></svg>
+                            Google
+                        </button>
+                        <button onclick="handleAppleLogin()" class="flex items-center justify-center gap-2 w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-4 rounded-lg">
+                           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"><path d="M27.21,14.52c0.17-2.3-1.6-3.88-3.66-3.93-1.83-.04-3.53,1.23-4.47,2.21-0.87,0.9-1.63,2.25-2.04,2.25s-0.79-1.04-1.97-2.13c-1.12-1.03-2.6-2.4-4.24-2.35-2.24,0.08-4.04,1.86-4.04,4.35,0,2.94,2.36,6.64,4.27,8.73,0.96,1.06,2.02,2.26,3.47,2.24,1.41-0.02,1.83-0.69,3.58-0.72s2.07,0.09,3.5-0.04c1.55-0.14,2.54-0.9,3.46-2.1,1.1-1.42,1.98-3.4,2.05-3.56-0.04-.02-3.4-1.35-3.4-5.24Zm-10.63,12.5c0.04,0,0.1,0,0.14,0,0.92-0.16,2.2-0.72,3.12-0.75,1,0,1.96,0.52,2.9,0.6,0.11,0.01,0.22,0.02,0.33,0.02,1.25,0,2.26-0.74,2.95-1.92-0.79-0.52-1.81-1.2-2.99-1.25-0.96-0.04-2.02,0.56-2.92,0.56s-1.82-0.64-2.9-0.66c-1.22-0.03-2.33,0.67-3.13,1.35,0.73,1.26,1.75,2.03,3.01,2.07,0.1,0,0.2,0.01,0.29,0.01Z"></path></svg>
+                            Apple
+                        </button>
+                    </div>
+
+                    <button onclick="showStep('step-welcome')" data-translate="back_button" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="step-role-selection" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">What is your role?</h2>
+                <p class="text-gray-400 text-center mb-8">This helps us connect you with the right community.</p>
+                <div class="max-w-xs mx-auto space-y-4">
+                    <button onclick="handleRoleSelect('student')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Student</button>
+                    <button onclick="handleRoleSelect('mentor')" class="w-full bg-gray-700 hover:bg-gray-600 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Mentor</button>
+                    <button onclick="handleRoleSelect('both')" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Both</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="step-details" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Complete Your Profile</h2>
+                <p class="text-gray-400 text-center mb-8">Just a few more details to get started.</p>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="first-name" class="text-sm font-medium text-gray-300">First Name</label>
+                            <input type="text" id="first-name" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="John">
+                        </div>
+                        <div>
+                            <label for="last-name" class="text-sm font-medium text-gray-300">Last Name</label>
+                            <input type="text" id="last-name" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Doe">
+                        </div>
+                    </div>
+                    <div>
+                        <label for="phone" class="text-sm font-medium text-gray-300">Phone Number</label>
+                        <input type="tel" id="phone" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="+1 (555) 123-4567">
+                    </div>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="country" class="text-sm font-medium text-gray-300">Country</label>
+                            <input type="text" id="country" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="India">
+                        </div>
+                        <div>
+                            <label for="state" class="text-sm font-medium text-gray-300">State</label>
+                            <input type="text" id="state" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Maharashtra">
+                        </div>
+                        <div>
+                            <label for="district" class="text-sm font-medium text-gray-300">District / City</label>
+                            <input type="text" id="district" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Mumbai">
+                        </div>
+                    </div>
+                    <button onclick="handleDetailsSubmit()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Continue</button>
+                </div>
+                 <button onclick="showStep('step-signup-form')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Go Back</button>
+            </div>
+        </div>
+
+        <div id="step-home" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card relative">
+                <button onclick="showStep('step-settings')" class="absolute top-6 right-6 text-gray-400 hover:text-white">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
+                </button>
+                <div class="flex flex-col sm:flex-row items-center gap-4 mb-8 text-center sm:text-left">
+                    <button id="home-profile-pic-container" onclick="openEditProfile()" class="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center border-2 border-gray-600 flex-shrink-0 relative cursor-pointer group">
+                        <img id="home-profile-pic" src="" alt="Profile" class="w-full h-full rounded-full object-cover hidden">
+                        <span id="home-profile-initial" class="text-3xl">👤</span>
+                        <div class="absolute inset-0 bg-black bg-opacity-50 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.5L15.232 5.232z" /></svg>
+                        </div>
+                    </button>
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl md:text-4xl font-bold">Welcome, <span id="home-username" class="text-indigo-400"></span>!</h2>
+                        <p class="text-gray-400">Ready to discover your future?</p>
+                    </div>
+                </div>
+
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700 flex flex-col items-center text-center">
+                        <div class="text-4xl mb-3">🧭</div>
+                        <h3 class="font-bold text-xl mb-2">Explore Your Path</h3>
+                        <p class="text-gray-400 text-sm mb-4">Get personalized career insights.</p>
+                        <button onclick="showStep('step-class')" class="mt-auto w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-transform transform hover:scale-105">Start Journey</button>
+                    </div>
+                     <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700 flex flex-col items-center text-center">
+                        <div class="text-4xl mb-3">🤝</div>
+                        <h3 class="font-bold text-xl mb-2">
+                             <span class="font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-cyan-500">Your Networks</span>
+                        </h3>
+                        <p class="text-gray-400 text-sm mb-4">This feature is coming soon!</p>
+                        <button disabled class="mt-auto w-full bg-gray-600 text-white font-semibold py-2.5 px-6 rounded-lg cursor-not-allowed">Find Friends</button>
+                    </div>
+                    <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700 flex flex-col items-center text-center">
+                        <div class="text-4xl mb-3">📊</div>
+                        <h3 class="font-bold text-xl mb-2">Activity Center</h3>
+                        <p class="text-gray-400 text-sm mb-4">Review your progress and activity.</p>
+                        <button onclick="showStep('step-activity-center')" class="mt-auto w-full bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-transform transform hover:scale-105">View Center</button>
+                    </div>
+                    <div class="bg-gray-900/50 p-6 rounded-lg border border-gray-700 flex flex-col items-center text-center">
+                        <div class="text-4xl mb-3">🎯</div>
+                        <h3 class="font-bold text-xl mb-2">Progress Tracker</h3>
+                        <p class="text-gray-400 text-sm mb-4">Set goals and track your tasks.</p>
+                        <button onclick="showStep('step-progress-tracker')" class="mt-auto w-full bg-purple-600 hover:bg-purple-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-transform transform hover:scale-105">Set Goals</button>
+                    </div>
+                </div>
+
+                <div id="learning-hub-container" class="mt-10 hidden">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Your Personalized Learning Hub</h3>
+                    <div id="learning-hub-content" class="space-y-6"></div>
+                </div>
+
+
+                <div class="mt-10">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">What's Trending Near You</h3>
+                    <div id="recommendations-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                </div>
+
+                <div class="mt-10 p-6 bg-gray-900/50 rounded-lg border border-gray-700 text-center">
+                    <h3 class="text-xl sm:text-2xl font-bold mb-4">Connect with an Expert</h3>
+                    <p class="text-gray-400 mb-6">Can't find what you're looking for? Search for an expert in any field worldwide.</p>
+                    <div class="flex flex-col sm:flex-row gap-2 max-w-lg mx-auto">
+                        <input type="search" id="expert-search-input" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="e.g., Quantum Physics, Marine Biology...">
+                        <button onclick="handleExpertConnect()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Connect</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="step-friends" class="step-container step-hidden">
+             <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-4">Find New Connections</h2>
+                <div class="mb-6 max-w-2xl mx-auto">
+                    <p class="text-center text-gray-400">This feature is currently under development to ensure user privacy and security. Please check back later!</p>
+                </div>
+                <button onclick="showStep('step-home')" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back to Home</button>
+            </div>
+        </div>
+
+        <div id="step-helpdesk" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Help & Support Center</h2>
+                <p class="text-gray-400 text-center mb-8">Have a problem or a question? Submit a ticket and we'll get back to you.</p>
+
+                <div class="max-w-xl mx-auto">
+                    <form onsubmit="handleHelpdeskSubmit(event)" class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-6 space-y-4">
+                        <h3 class="font-semibold text-lg">Create a New Ticket</h3>
+                        <div>
+                            <label for="help-topic" class="text-sm font-medium text-gray-300">Topic</label>
+                            <select id="help-topic" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                                <option>Technical Issue</option>
+                                <option>Feedback & Suggestions</option>
+                                <option>Billing Inquiry</option>
+                                <option>General Question</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="help-message" class="text-sm font-medium text-gray-300">Please describe your issue</label>
+                            <textarea id="help-message" rows="4" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Provide as much detail as possible..."></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Submit Ticket</button>
+                    </form>
+
+                    <div>
+                        <h3 class="font-semibold text-lg mb-4">Your Ticket History</h3>
+                        <div id="ticket-history-list" class="space-y-3 max-h-[250px] overflow-y-auto pr-2"></div>
+                    </div>
+                </div>
+
+                <button onclick="showStep('step-settings')" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back to Settings</button>
+            </div>
+        </div>
+
+        <div id="step-progress-tracker" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Your Progress Tracker</h2>
+                <p class="text-gray-400 text-center mb-8">Add your goals and stay on track.</p>
+
+                <div class="max-w-xl mx-auto">
+                    <div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-6">
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <input type="text" id="new-task-input" class="w-full flex-grow bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Enter a new task or goal...">
+                            <input type="date" id="new-task-date" class="bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                            <button onclick="addTask()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105 whitespace-nowrap">Add Task</button>
+                        </div>
+                    </div>
+
+                    <div id="task-list" class="space-y-3 max-h-[300px] overflow-y-auto pr-2"></div>
+                </div>
+
+                <button onclick="showStep('step-home')" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back to Home</button>
+            </div>
+        </div>
+
+
+        <div id="step-settings" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-8">Settings</h2>
+                <div class="space-y-4 max-w-md mx-auto">
+                     <div class="p-4 bg-gray-700/50 rounded-lg">
+                        <h3 class="font-semibold mb-3">Language</h3>
+                        <select onchange="applyLanguage(this.value)" id="language-select" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                            <option value="en-IN">English (IN)</option>
+                            <option value="en-US">English (US)</option>
+                            <option value="hi">Hindi (हिन्दी)</option>
+                            <option value="hi-en">Hinglish</option>
+                        </select>
+                    </div>
+                    <button onclick="openEditProfile()" class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition">Edit Profile</button>
+                    <button onclick="handleSettingClick('share')" class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition">Share User ID (QR)</button>
+                    <button onclick="handleSettingClick('help')" class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition">Ask Question from Help Team</button>
+                    <button onclick="handleSettingClick('password')" class="w-full text-left p-4 bg-gray-700/50 hover:bg-gray-700 rounded-lg transition">Forgot Password</button>
+                    <button onclick="handleLogout()" class="w-full text-left p-4 bg-indigo-900/40 hover:bg-indigo-900/60 text-indigo-300 rounded-lg transition font-semibold">Logout</button>
+                    <button onclick="handleSettingClick('deactivate')" class="w-full text-left p-4 bg-yellow-900/30 hover:bg-yellow-900/50 text-yellow-300 rounded-lg transition">Deactivate Account (15 days)</button>
+                    <button onclick="handleSettingClick('delete')" class="w-full text-left p-4 bg-red-900/30 hover:bg-red-900/50 text-red-300 rounded-lg transition">Delete Account Permanently</button>
+                </div>
+                <button onclick="showStep('step-home')" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back to Home</button>
+            </div>
+        </div>
+
+        <div id="step-edit-profile" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Edit Your Profile</h2>
+                <!-- REWRITTEN PROFILE PICTURE SECTION -->
+                <div class="flex flex-col items-center gap-2 mt-4 mb-6">
+                    <div class="relative group">
+                        <div id="edit-profile-pic-container" class="w-24 h-24 bg-gray-700 rounded-full flex items-center justify-center border-2 border-gray-600 relative overflow-hidden">
+                            <img id="edit-profile-pic" src="" alt="Profile" class="w-full h-full rounded-full object-cover hidden">
+                            <span id="edit-profile-initial" class="text-4xl">👤</span>
+                            <!-- Overlay for upload -->
+                            <div id="pic-upload-overlay" class="absolute inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden">
+                                <div class="loader !w-8 !h-8 !border-4"></div>
+                            </div>
+                        </div>
+                        <button onclick="document.getElementById('profile-pic-input').click()" class="absolute inset-0 bg-black bg-opacity-60 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer" aria-label="Change profile picture">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </button>
+                    </div>
+                     <input type="file" id="profile-pic-input" class="hidden" accept="image/*, .heic, .heif" onchange="handleFileSelect(event)">
+                     <p class="text-sm text-gray-400">Click image to change</p>
+                </div>
+
+                <form onsubmit="handleProfileUpdate(event)" class="space-y-6 max-w-lg mx-auto">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="edit-first-name" class="text-sm font-medium text-gray-300">First Name</label>
+                            <input type="text" id="edit-first-name" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label for="edit-last-name" class="text-sm font-medium text-gray-300">Last Name</label>
+                            <input type="text" id="edit-last-name" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                    </div>
+                     <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div>
+                            <label for="edit-country" class="text-sm font-medium text-gray-300">Country</label>
+                            <input type="text" id="edit-country" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label for="edit-state" class="text-sm font-medium text-gray-300">State</label>
+                            <input type="text" id="edit-state" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                        <div>
+                            <label for="edit-district" class="text-sm font-medium text-gray-300">District / City</label>
+                            <input type="text" id="edit-district" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition">
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Save Changes</button>
+                </form>
+                 <button onclick="showStep('step-settings')" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back to Settings</button>
+            </div>
+        </div>
+
+
+        <div id="step-class" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Hello there!</h2>
+                <p class="text-gray-400 text-center mb-8">Let's start by choosing your current academic stage.</p>
+                <div id="class-options" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
+                 <button onclick="showStep('step-home')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Go Back to Home</button>
+            </div>
+        </div>
+
+        <div id="step-stream" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Great! Now, pick your stream.</h2>
+                <p class="text-gray-400 text-center mb-8">Which path are you on? This helps us narrow down the options.</p>
+                <div id="stream-options" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                 <button onclick="showStep('step-class')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Go Back</button>
+            </div>
+        </div>
+
+        <div id="step-feedback" class="step-container step-hidden">
+             <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">How do you feel about this path?</h2>
+                <p class="text-gray-400 text-center mb-8">Be honest! Your feelings matter in this journey.</p>
+                <div id="feedback-options" class="flex justify-center items-center gap-4 md:gap-8 flex-wrap"></div>
+                <button onclick="showStep('step-stream')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Go Back</button>
+            </div>
+        </div>
+        
+        <div id="step-interest" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Tell Us a Bit More</h2>
+                <p class="text-gray-400 text-center mb-8">What sparks your curiosity?</p>
+                <div class="space-y-6">
+                    <div>
+                        <label for="interests" class="text-sm font-medium text-gray-300">What are your interests or hobbies related to this field?</label>
+                        <textarea id="interests" rows="3" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="e.g., building things, solving puzzles, creative writing..."></textarea>
+                    </div>
+                    <div>
+                        <label for="inspiration" class="text-sm font-medium text-gray-300">Who or what is your inspiration for choosing this path?</label>
+                        <textarea id="inspiration" rows="3" class="w-full mt-2 bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="e.g., a family member, a famous scientist, a movie..."></textarea>
+                    </div>
+                    <button onclick="showStep('step-activation')" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 px-6 rounded-lg transition-transform transform hover:scale-105">Continue</button>
+                </div>
+                <button onclick="showStep('step-feedback')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Go Back</button>
+            </div>
+        </div>
+
+        <div id="step-activation" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card text-center">
+                <h2 class="text-2xl sm:text-3xl font-bold mb-2">You're All Set!</h2>
+                <p class="text-gray-400 mb-8">Here's a summary of your chosen path. Ready to explore the possibilities?</p>
+                <div class="text-left bg-gray-900/50 p-6 rounded-lg mb-8 space-y-2 border border-gray-700">
+                    <p><strong>Your Stage:</strong> <span id="summary-class" class="text-gray-300 font-medium"></span></p>
+                    <p><strong>Your Path:</strong> <span id="summary-stream" class="text-gray-300 font-medium"></span></p>
+                    <p><strong>Your Vibe:</strong> <span id="summary-feeling" class="text-gray-300 font-medium"></span></p>
+                </div>
+                <button onclick="generateAndShowFinalStep()" class="w-full sm:w-auto bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-8 rounded-lg transition-transform transform hover:scale-105 shadow-lg shadow-green-500/20">✨ Activate Path & Get AI Insights</button>
+                <button onclick="showStep('step-interest')" class="mt-8 text-indigo-400 hover:text-indigo-300 block">&larr; Go Back</button>
+            </div>
+        </div>
+
+        <div id="step-final" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <div class="flex items-center justify-center mb-2 flex-wrap gap-2">
+                    <h2 class="text-2xl sm:text-3xl font-bold text-center">Your AI-Powered Career Path: <span id="final-path-title" class="text-indigo-400"></span></h2>
+                    <button id="browser-tts-button" onclick="readSummaryWithBrowser()" class="p-2 bg-indigo-600 rounded-full hover:bg-indigo-700 text-white transition-transform transform hover:scale-110" title="Read summary aloud">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707a1 1 0 011.414 0v14.414a1 1 0 01-1.414 0L5.586 15z" />
+                        </svg>
+                    </button>
+                </div>
+
+                <p class="text-gray-400 mb-6 text-center">Here's a personalized breakdown of your journey, generated by our AI career counselor.</p>
+                <div id="final-details" class="space-y-4 text-gray-300 bg-gray-900/50 p-6 rounded-lg border border-gray-700 min-h-[250px]"></div>
+                
+                <div id="step-by-step-guide-section" class="mt-8 hidden">
+                     <h3 class="text-xl sm:text-2xl font-bold text-center mb-4">Your AI Step-by-Step Guide</h3>
+                     <div id="step-by-step-guide-content" class="bg-gray-900/50 p-4 rounded-lg border border-gray-700"></div>
+                </div>
+
+                <div id="career-path-tree-section" class="mt-8 hidden">
+                    <h3 class="text-xl sm:text-2xl font-bold text-center mb-4">Your Career Roadmap</h3>
+                    <div id="career-tree-container" class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 overflow-x-auto"></div>
+                    <div class="text-center mt-4">
+                        <button onclick="downloadCareerTree()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg transition-transform transform hover:scale-105">
+                            Download as Image
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="coaching-section" class="mt-8 hidden">
+                     <h3 class="text-xl sm:text-2xl font-bold text-center mb-4">Top Coaching & Institutes</h3>
+                     <div id="coaching-content" class="bg-gray-900/50 p-4 rounded-lg border border-gray-700"></div>
+                </div>
+                
+                <div class="mt-8 p-6 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg text-center">
+                    <h3 class="text-xl font-bold text-white">Experience Your Future</h3>
+                    <p class="mt-1 mb-5 text-white/80">Try our AI simulation to see what a day in your chosen career is really like.</p>
+                     <button onclick="startDayInLifeSimulation()" class="bg-white text-purple-600 font-semibold py-2.5 px-6 rounded-lg hover:bg-gray-200 transition-transform transform hover:scale-105">✨ Live a Day in the Life</button>
+                </div>
+
+                <div class="mt-8 p-6 bg-gradient-to-r from-gray-700 to-gray-800 border border-gray-600 rounded-lg text-center">
+                    <h3 class="text-xl font-bold text-white">Track Your Progress</h3>
+                    <p class="mt-1 mb-5 text-white/80">Review your journey and decisions so far.</p>
+                     <button onclick="showStep('step-activity-center')" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2.5 px-6 rounded-lg transition-transform transform hover:scale-105">📊 View Activity Center</button>
+                </div>
+
+                <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="p-6 bg-gradient-to-r from-teal-500 to-cyan-600 rounded-lg text-center">
+                        <h3 class="text-xl font-bold text-white">Connect & Grow</h3>
+                        <p class="mt-1 mb-5 text-white/80">Talk to peers or get advice from experienced mentors.</p>
+                        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button onclick="showStep('step-community-hub')" class="bg-white text-teal-600 font-semibold py-2.5 px-6 rounded-lg hover:bg-gray-200 transition-transform transform hover:scale-105">👥 Community</button>
+                            <button onclick="showStep('step-mentors')" class="bg-white/20 border-2 border-white text-white font-semibold py-2.5 px-6 rounded-lg hover:bg-white hover:text-cyan-600 transition-colors">🎓 Mentors</button>
+                        </div>
+                    </div>
+                    
+                     <div class="p-6 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-lg text-center">
+                        <h3 class="text-xl font-bold text-white">Prepare for Future</h3>
+                        <p class="mt-1 mb-5 text-white/80">Practice common interview questions for your field.</p>
+                        <button id="interview-btn" onclick="generateInterviewQuestions()" class="bg-white text-indigo-600 font-semibold py-2.5 px-6 rounded-lg hover:bg-gray-200 transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed">✨ Get Questions</button>
+                    </div>
+                </div>
+
+                <div id="interview-questions-container" class="mt-4 hidden"></div>
+                
+                <button onclick="showStep('step-home')" class="mt-8 w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold py-3 px-6 rounded-lg transition-all transform hover:scale-105 shadow-lg shadow-indigo-500/50 flex items-center justify-center gap-3">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+                    </svg>
+                    <span>Back to Home</span>
+                </button>
+            </div>
+        </div>
+        
+        <div id="step-simulation" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">A Day in the Life of a <span id="simulation-role-title" class="text-indigo-400"></span></h2>
+                <div id="simulation-content" class="mt-6 bg-gray-900/50 p-6 rounded-lg border border-gray-700 min-h-[200px] text-gray-300 leading-relaxed"></div>
+                <div id="simulation-choices" class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                 <button onclick="showStep('step-final')" class="mt-8 text-indigo-400 hover:text-indigo-300 mx-auto block">&larr; Back to My Path</button>
+            </div>
+        </div>
+
+        <div id="step-community-hub" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Community Hub</h2>
+                <p class="text-gray-400 text-center mb-8">Join a discussion room to chat with others on a similar path.</p>
+                <div id="community-rooms" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+                <button onclick="showStep('step-final')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Back to My Path</button>
+            </div>
+        </div>
+        
+        <div id="step-chat-room" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl shadow-2xl step-card flex flex-col h-[85vh] max-h-[650px]">
+                <div class="flex items-center justify-between p-4 border-b border-gray-700">
+                    <h3 id="chat-room-title" class="font-bold text-lg text-center"></h3>
+                     <button onclick="leaveChatRoom()" class="text-sm bg-red-600/50 text-red-200 hover:bg-red-600/80 px-3 py-1 rounded-md">Leave Chat</button>
+                </div>
+                <div id="chat-room-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-900/50"></div>
+                <div class="p-4 border-t border-gray-700">
+                    <form onsubmit="sendCommunityMessage(event)" class="flex flex-col gap-3">
+                        <textarea id="chat-room-input" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white outline-none focus:ring-2 focus:ring-indigo-500" rows="2" placeholder="Share your thoughts..."></textarea>
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 text-sm text-gray-400">
+                                <input type="checkbox" id="anonymous-toggle" class="bg-gray-700 border border-gray-600 rounded text-indigo-500 focus:ring-indigo-500">
+                                <label for="anonymous-toggle">Post anonymously</label>
+                            </div>
+                            <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-5 rounded-lg">Send</button>
+                        </div>
+                    </form>
+                </div>
+                <button onclick="showStep('step-community-hub')" class="text-indigo-400 hover:text-indigo-300 p-4">&larr; Back to Hub</button>
+            </div>
+        </div>
+
+        <div id="step-mentors" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <h2 class="text-2xl sm:text-3xl font-bold text-center mb-2">Connect with a Mentor</h2>
+                <p class="text-gray-400 text-center mb-8">Get personalized advice from industry experts.</p>
+                <div id="mentor-list" class="grid grid-cols-1 md:grid-cols-2 gap-6"></div>
+                <button onclick="showStep('step-final')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Back to My Path</button>
+            </div>
+        </div>
+
+        <div id="step-activity-center" class="step-container step-hidden">
+            <div class="bg-gray-800 bg-opacity-50 border border-gray-700 rounded-2xl p-6 sm:p-8 md:p-12 shadow-2xl step-card">
+                <div class="flex flex-col sm:flex-row justify-between sm:items-center gap-4 mb-8">
+                    <div>
+                        <h2 class="text-2xl sm:text-3xl font-bold mb-1">Your Activity Center</h2>
+                        <p class="text-gray-400">Here's a log of your journey with Cusees, <span id="activity-center-username" class="font-semibold text-indigo-400"></span>.</p>
+                    </div>
+                    <button onclick="showStep('step-home')" class="bg-gray-700 hover:bg-gray-600 text-white font-semibold py-2 px-4 rounded-lg transition-transform transform hover:scale-105 whitespace-nowrap">🏠 Go to Home</button>
+                </div>
+                <div id="activity-center-feed" class="space-y-4 max-h-[400px] overflow-y-auto pr-2"></div>
+                 <button onclick="showStep('step-final')" class="mt-8 text-indigo-400 hover:text-indigo-300">&larr; Back to My Path</button>
+            </div>
+        </div>
+
+        <!-- Notification Modal -->
+        <div id="notification-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300">
+            <div id="notification-content" class="bg-gray-800 rounded-2xl p-8 shadow-2xl max-w-sm w-full text-center border border-gray-700">
+                <p id="notification-message" class="text-lg text-gray-200 mb-6"></p>
+                <button onclick="hideNotification()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-8 rounded-lg transition-transform transform hover:scale-105">OK</button>
+            </div>
+        </div>
+
+        <!-- Welcome Modal -->
+        <div id="welcome-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300">
+            <div class="bg-gray-800 rounded-2xl p-8 shadow-2xl max-w-md w-full text-center border border-gray-700">
+                 <h2 class="text-2xl font-bold mb-4">Welcome to Career Friend!</h2>
+                 <p class="text-gray-400 mb-4">Career Friend is your personalized career companion — helping students explore paths, connect with peers & mentors, and track their progress through an interactive and supportive platform.</p>
+                 <div class="text-left p-4 rounded-lg bg-gray-900/50">
+                    <h3 class="font-bold text-lg text-indigo-400 mb-2">🎯 Main Motive</h3>
+                    <p class="text-gray-300">The main motive of Career Friend is to guide learners in discovering the right career choices, provide step-by-step roadmaps, and build a supportive network where students can grow together with mentors and friends.</p>
+                 </div>
+                 <button onclick="hideWelcomeModal()" class="mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-8 rounded-lg">OK</button>
+            </div>
+        </div>
+
+        <!-- Profile Pic Cropper Modal -->
+        <div id="cropper-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden">
+            <div class="bg-gray-800 rounded-2xl p-6 shadow-2xl max-w-lg w-full border border-gray-700">
+                <h3 class="text-xl font-bold text-center mb-4">Crop Your Picture</h3>
+                <div id="cropper-container" class="mb-4 bg-gray-900">
+                    <img id="cropper-image" src="">
+                </div>
+                <div class="flex justify-center gap-4">
+                    <button onclick="removeProfilePicture()" class="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded-lg">Remove</button>
+                    <button onclick="hideCropperModal()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-6 rounded-lg">Cancel</button>
+                    <button id="save-crop-btn" onclick="saveCroppedImage()" class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-6 rounded-lg flex items-center justify-center gap-2">
+                        <span id="save-crop-btn-text">Save</span>
+                        <div id="save-crop-spinner" class="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin hidden"></div>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Feedback Modal -->
+        <div id="feedback-modal" class="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300">
+            <div class="bg-gray-800 rounded-2xl p-8 shadow-2xl max-w-md w-full border border-gray-700">
+                <h3 class="text-2xl font-bold text-center mb-4">How was your experience?</h3>
+                <p class="text-gray-400 text-center mb-6">Your feedback helps us improve.</p>
+                <div class="flex justify-center items-center gap-2 mb-6 feedback-stars" id="feedback-stars-container"></div>
+                <textarea id="feedback-text" rows="3" class="w-full bg-gray-700 border border-gray-600 rounded-lg px-4 py-3 text-white focus:ring-2 focus:ring-indigo-500 outline-none transition" placeholder="Any additional comments?"></textarea>
+                <div class="flex justify-center gap-4 mt-6">
+                    <button onclick="hideFeedbackModal()" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold py-2 px-8 rounded-lg">Skip</button>
+                    <button onclick="submitFeedback()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-8 rounded-lg">Submit</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Player Modal -->
+        <div id="video-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50 hidden transition-opacity duration-300">
+            <div class="relative w-full max-w-3xl">
+                 <button onclick="closeVideoPlayer()" class="absolute -top-10 right-0 text-white text-4xl font-bold">&times;</button>
+                 <div id="video-modal-content" class="bg-black rounded-lg overflow-hidden shadow-2xl w-full">
+                    <iframe id="youtube-player" class="w-full h-full" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                 </div>
+            </div>
+        </div>
+
+    </main>
+
+    <button onclick="openChat()" id="chat-fab" class="fixed bottom-8 right-8 bg-indigo-600 hover:bg-indigo-700 text-white rounded-full p-4 shadow-lg transition-transform transform hover:scale-110 z-40">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.486 2 2 6.486 2 12s4.486 10 10 10c1.89 0 3.63-.522 5.094-1.428.375.581.84 1.107 1.38 1.56a1 1 0 001.414-1.414c-.453-.44-1.025-.99-1.56-1.38A9.934 9.934 0 0022 12c0-5.514-4.486-10-10-10zm0 18c-4.411 0-8-3.589-8-8s3.589-8 8-8 8 3.589 8 8-3.589 8-8 8z"/><path d="M14.5 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM9.5 10.5a1.5 1.5 0 100-3 1.5 1.5 0 000 3zM12 14c-2.481 0-4.5 1.567-4.5 3.5a.5.5 0 001 0c0-1.433 1.519-2.5 3.5-2.5s3.5 1.067 3.5 2.5a.5.5 0 001 0c0-1.933-2.019-3.5-4.5-3.5z"/></svg>
+    </button>
+    
+    <!-- FULLY RESPONSIVE CHAT MODAL -->
+    <div id="chat-modal-container" class="fixed inset-0 md:inset-auto md:bottom-28 md:right-8 md:w-[90vw] md:max-w-md md:h-[75vh] z-50 transition-all duration-300 transform md:translate-y-10 opacity-0 pointer-events-none">
+        <div id="chat-modal" class="w-full h-full bg-gray-800 border border-gray-700 md:rounded-2xl shadow-2xl flex flex-col">
+            <div class="flex items-center justify-between p-4 border-b border-gray-700 flex-shrink-0">
+                <h3 class="font-bold text-lg">Chat with Career Friend AI</h3>
+                <button onclick="closeChat()" class="text-gray-400 hover:text-white text-2xl font-bold">&times;</button>
+            </div>
+            <div id="chat-messages" class="flex-1 p-4 overflow-y-auto space-y-4 bg-gray-900/50">
+                 <div class="p-3 rounded-lg bg-indigo-600 text-white self-start max-w-xs break-words">
+                    Hi! I'm Career Friend, your AI career assistant. How can I help you today?
+                </div>
+            </div>
+             <div id="chat-loader" class="p-4 hidden flex-shrink-0">
+                <div class="flex items-center gap-2">
+                    <div class="loader !w-5 !h-5 !border-4 !border-white !border-bottom-color-transparent"></div>
+                    <span class="text-sm text-gray-400">Career Friend is thinking...</span>
+                </div>
+            </div>
+            <div class="p-4 border-t border-gray-700 flex-shrink-0">
+                <form onsubmit="sendChatMessage(event)" class="flex gap-2">
+                    <input id="chat-input" type="text" class="flex-1 bg-gray-700 border border-gray-600 rounded-lg px-4 py-2 text-white focus:ring-2 focus:ring-indigo-500 outline-none" placeholder="Ask about careers...">
+                    <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded-lg">Send</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script type="module">
+
+                // COMPLETE SECURE CAREER FRIEND JAVASCRIPT - ALL FEATURES INCLUDED
+        // Replace your entire <script type="module"> section with this complete version
+
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, signOut, sendPasswordResetEmail, reauthenticateWithCredential, EmailAuthProvider, deleteUser } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, addDoc, updateDoc, deleteDoc, onSnapshot, query, orderBy, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject, listAll } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+        // --- SECURE CONFIGURATION MANAGEMENT ---
+        let appConfig = {
+            firebaseConfig: null,
+            isConfigLoaded: false,
+            firebase: {
+                app: null,
+                auth: null,
+                db: null,
+                storage: null
+            }
+        };
+
+        // --- SECURE FIREBASE INITIALIZATION ---
+        async function initializeSecureFirebase() {
+            try {
+                console.log('🔄 Loading secure Firebase configuration...');
+
+                // Fetch config from secure Netlify function
+                const response = await fetch('/api/firebase-config');
+                if (!response.ok) {
+                    throw new Error(`Config load failed: ${response.status}`);
+                }
+
+                appConfig.firebaseConfig = await response.json();
+
+                // Initialize Firebase with secure config
+                appConfig.firebase.app = initializeApp(appConfig.firebaseConfig);
+                appConfig.firebase.auth = getAuth(appConfig.firebase.app);
+                appConfig.firebase.db = getFirestore(appConfig.firebase.app);
+                appConfig.firebase.storage = getStorage(appConfig.firebase.app);
+
+                console.log('✅ Firebase initialized securely');
+                appConfig.isConfigLoaded = true;
+
+                return appConfig.firebase;
+
+            } catch (error) {
+                console.error('❌ Failed to initialize Firebase:', error);
+                showNotification('Failed to load application. Please refresh the page.', 'error');
+                return null;
+            }
+        }
+
+        // --- SECURE GEMINI AI API PROXY ---
+        async function callGeminiAPI(prompt, systemInstruction, useSearch = false) {
+            try {
+                // Input validation and sanitization
+                if (!prompt || typeof prompt !== 'string') {
+                    throw new Error('Invalid prompt provided');
+                }
+
+                // Limit prompt length to prevent abuse
+                if (prompt.length > 5000) {
+                    throw new Error('Prompt too long. Please limit to 5000 characters.');
+                }
+
+                if (!systemInstruction || typeof systemInstruction !== 'string') {
+                    throw new Error('Invalid system instruction');
+                }
+
+                if (systemInstruction.length > 2000) {
+                    throw new Error('System instruction too long. Please limit to 2000 characters.');
+                }
+
+                console.log('🤖 Making secure AI request through Netlify function...');
+
+                // Call secure Netlify function instead of direct API
+                const response = await fetch('/api/gemini', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        prompt: prompt.trim(),
+                        systemInstruction: systemInstruction.trim(),
+                        useSearch: Boolean(useSearch)
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+
+                    // Handle different error types gracefully
+                    if (response.status === 429) {
+                        throw new Error('Too many requests. Please wait a moment before trying again.');
+                    } else if (response.status === 400) {
+                        throw new Error(errorData.error || 'Invalid request. Please check your input.');
+                    } else if (response.status >= 500) {
+                        throw new Error('AI service is temporarily unavailable. Please try again later.');
+                    } else {
+                        throw new Error(errorData.error || `Request failed with status ${response.status}`);
+                    }
+                }
+
+                const result = await response.json();
+                console.log('✅ AI request completed successfully');
+                return result;
+
+            } catch (error) {
+                console.error('❌ AI API call error:', error);
+
+                // Show user-friendly error message
+                const userMessage = error.message || 'Failed to get AI response. Please try again.';
+                showNotification(userMessage, 'error');
+
+                return null;
+            }
+        }
+
+        // --- ENHANCED NOTIFICATION SYSTEM WITH XSS PROTECTION ---
+        function showNotification(message, type = 'info', duration = 5000) {
+            try {
+                // Sanitize message to prevent XSS attacks
+                const sanitizedMessage = String(message || 'Unknown error')
+                    .replace(/</g, '&lt;')
+                    .replace(/>/g, '&gt;')
+                    .replace(/"/g, '&quot;')
+                    .replace(/'/g, '&#x27;')
+                    .replace(/&/g, '&amp;')
+                    .substring(0, 200); // Limit message length
+
+                // Remove any existing notifications of the same type to prevent spam
+                const existingNotifications = document.querySelectorAll(`.notification-${type}`);
+                existingNotifications.forEach(notification => notification.remove());
+
+                const notification = document.createElement('div');
+                notification.className = `fixed top-4 right-4 z-50 max-w-sm p-4 rounded-lg shadow-lg notification-${type} transform transition-all duration-300 ease-in-out`;
+
+                // Set colors and icons based on type
+                switch (type) {
+                    case 'error':
+                        notification.className += ' bg-red-500 text-white border-2 border-red-600';
+                        break;
+                    case 'success':
+                        notification.className += ' bg-green-500 text-white border-2 border-green-600';
+                        break;
+                    case 'warning':
+                        notification.className += ' bg-yellow-500 text-black border-2 border-yellow-600';
+                        break;
+                    default:
+                        notification.className += ' bg-blue-500 text-white border-2 border-blue-600';
+                }
+
+                notification.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm font-medium">${sanitizedMessage}</span>
+                        <button onclick="this.parentElement.parentElement.remove()" 
+                                class="ml-3 text-lg font-bold hover:opacity-75 focus:outline-none transition-opacity"
+                                aria-label="Close notification">&times;</button>
+                    </div>
+                `;
+
+                // Add to DOM with animation
+                document.body.appendChild(notification);
+
+                // Auto-remove after duration with fade animation
+                setTimeout(() => {
+                    if (notification.parentElement) {
+                        notification.style.opacity = '0';
+                        notification.style.transform = 'translateX(100%)';
+                        setTimeout(() => {
+                            if (notification.parentElement) {
+                                notification.remove();
+                            }
+                        }, 300);
+                    }
+                }, duration);
+
+            } catch (error) {
+                console.error('Error showing notification:', error);
+                // Fallback to alert if notification system fails
+                alert(message);
+            }
+        }
+
+        // --- SECURE FIREBASE HELPERS ---
+        function getSecureAuth() {
+            if (!appConfig.firebase.auth) {
+                throw new Error('Firebase not initialized. Please refresh the page.');
+            }
+            return appConfig.firebase.auth;
+        }
+
+        function getSecureDB() {
+            if (!appConfig.firebase.db) {
+                throw new Error('Database not initialized. Please refresh the page.');
+            }
+            return appConfig.firebase.db;
+        }
+
+        function getSecureStorage() {
+            if (!appConfig.firebase.storage) {
+                throw new Error('Storage not initialized. Please refresh the page.');
+            }
+            return appConfig.firebase.storage;
+        }
+
+        // --- CAREER DATA (COMPLETE STRUCTURE) ---
+        const careerData = {
+            classes: [
+                { id: '10th', name: 'After 10th', icon: '🎓' },
+                { id: '12th', name: 'After 12th', icon: '📚' },
+                { id: 'btech', name: 'B.Tech', icon: '💻' },
+                { id: 'commerce_grad', name: 'Commerce Grad', icon: '📈' },
+                { id: 'arts_grad', name: 'Arts Grad', icon: '🎨' },
+                { id: 'pg', name: 'Post-Grad', icon: '🏛️' },
+            ],
+            streams: {
+                '10th': [
+                    { id: 'science', name: 'Science', details: { exams: 'Focus on school exams, Olympiads (NTSE, KVPY).', careers: 'Foundation for Engineering, Medical, Research, and more.', skills: 'Problem-solving, analytical thinking.' } },
+                    { id: 'commerce', name: 'Commerce', details: { exams: 'Focus on school exams, Commerce Olympiads.', careers: 'Foundation for CA, CS, Business, Finance.', skills: 'Numeracy, business acumen.' } },
+                    { id: 'arts', name: 'Arts/Humanities', details: { exams: 'Focus on school exams, creative competitions.', careers: 'Foundation for Law, Journalism, Literature, Social Work.', skills: 'Communication, creativity, critical thinking.' } },
+                ],
+                '12th': [
+                    { id: 'pcm', name: 'Physics, Chemistry, Maths (PCM)', details: { exams: 'JEE Main, JEE Advanced, BITSAT, state engineering exams.', careers: 'Engineering (all branches), Architecture, Defence, Pilot.', skills: 'Mathematical reasoning, physics concepts, chemistry applications.' } },
+                    { id: 'pcb', name: 'Physics, Chemistry, Biology (PCB)', details: { exams: 'NEET, AIIMS, JIPMER, state medical exams.', careers: 'Medicine, Dentistry, Pharmacy, Veterinary, Biotechnology.', skills: 'Biological understanding, chemistry knowledge, research aptitude.' } },
+                    { id: 'pcmb', name: 'Physics, Chemistry, Maths, Biology (PCMB)', details: { exams: 'Both JEE and NEET, flexibility to choose.', careers: 'Engineering or Medical, Biotechnology, Bioinformatics.', skills: 'Broad scientific knowledge, adaptability.' } },
+                    { id: 'commerce_accounts', name: 'Commerce with Accountancy', details: { exams: 'CA Foundation, CS Foundation, BBA/BCA entrances.', careers: 'Chartered Accountancy, Company Secretary, Banking, Finance.', skills: 'Accounting principles, financial management, business law.' } },
+                    { id: 'commerce_maths', name: 'Commerce with Maths', details: { exams: 'CA Foundation, Economics Honours entrances, BBA entrances.', careers: 'Economics, Statistics, Actuarial Science, Data Analysis.', skills: 'Quantitative analysis, economic reasoning, statistical thinking.' } },
+                    { id: 'arts_humanities', name: 'Arts/Humanities', details: { exams: 'CLAT, Journalism entrances, Literature entrances, Psychology entrances.', careers: 'Law, Journalism, Literature, Psychology, Social Work, Civil Services.', skills: 'Critical thinking, communication, cultural understanding, empathy.' } },
+                ],
+                'btech': [
+                    { id: 'cse', name: 'Computer Science Engineering', details: { exams: 'GATE (for higher studies/PSUs), Campus placements.', careers: 'Software Developer, Data Scientist, AI Engineer, Product Manager.', skills: 'Programming, algorithms, system design, problem-solving.' } },
+                    { id: 'ece', name: 'Electronics and Communication', details: { exams: 'GATE, ESE (Engineering Services Exam).', careers: 'Hardware Engineer, Telecom Engineer, Embedded Systems, VLSI Design.', skills: 'Circuit design, signal processing, embedded programming.' } },
+                    { id: 'mechanical', name: 'Mechanical Engineering', details: { exams: 'GATE, ESE, PSU exams.', careers: 'Design Engineer, Manufacturing, Automotive, Aerospace, Robotics.', skills: 'Mechanical design, thermodynamics, manufacturing processes.' } },
+                    { id: 'civil', name: 'Civil Engineering', details: { exams: 'GATE, ESE, State PWD exams.', careers: 'Construction Engineer, Urban Planner, Structural Designer, Government Projects.', skills: 'Structural analysis, construction management, project planning.' } },
+                    { id: 'electrical', name: 'Electrical Engineering', details: { exams: 'GATE, ESE, Power sector exams.', careers: 'Power Systems Engineer, Control Systems, Renewable Energy, Automation.', skills: 'Electrical systems, power generation, control engineering.' } },
+                ],
+                'commerce_grad': [
+                    { id: 'bcom_general', name: 'B.Com General', details: { exams: 'CA Inter, CS Executive, MBA entrances.', careers: 'Accounting, Banking, Insurance, Financial Services.', skills: 'Accounting, taxation, financial analysis.' } },
+                    { id: 'bcom_honours', name: 'B.Com Honours', details: { exams: 'CA Inter, CS Executive, CFA, FRM.', careers: 'Investment Banking, Financial Analysis, Corporate Finance.', skills: 'Advanced accounting, financial modeling, investment analysis.' } },
+                    { id: 'bba', name: 'Bachelor of Business Administration', details: { exams: 'MBA entrances (CAT, XAT, GMAT), Management trainee programs.', careers: 'Management, Marketing, HR, Operations, Entrepreneurship.', skills: 'Leadership, strategic thinking, communication, team management.' } },
+                    { id: 'economics', name: 'Economics Honours', details: { exams: 'MA Economics entrances, Civil Services, RBI Grade B.', careers: 'Economic Analyst, Policy Research, Banking, Government Services.', skills: 'Economic modeling, data analysis, policy understanding.' } },
+                ],
+                'arts_grad': [
+                    { id: 'ba_english', name: 'English Honours', details: { exams: 'MA English entrances, Journalism entrances, Civil Services.', careers: 'Writing, Journalism, Teaching, Content Creation, Publishing.', skills: 'Language proficiency, creative writing, literary analysis.' } },
+                    { id: 'ba_history', name: 'History Honours', details: { exams: 'MA History entrances, Civil Services, Archaeological Services.', careers: 'Teaching, Research, Civil Services, Museums, Heritage Tourism.', skills: 'Research, analytical thinking, cultural understanding.' } },
+                    { id: 'ba_psychology', name: 'Psychology Honours', details: { exams: 'MA Psychology entrances, Clinical Psychology entrances.', careers: 'Clinical Psychologist, Counselor, HR, Research, Social Work.', skills: 'Human behavior understanding, counseling, research methods.' } },
+                    { id: 'ba_sociology', name: 'Sociology Honours', details: { exams: 'MA Sociology entrances, Civil Services, Social Work entrances.', careers: 'Social Work, NGOs, Research, Government Services, Community Development.', skills: 'Social analysis, community engagement, policy understanding.' } },
+                ],
+                'pg': [
+                    { id: 'mba', name: 'Master of Business Administration', details: { exams: 'CAT, XAT, GMAT, SNAP for admissions.', careers: 'Management Consulting, Investment Banking, Product Management, Entrepreneurship.', skills: 'Strategic thinking, leadership, financial analysis, market research.' } },
+                    { id: 'mtech', name: 'Master of Technology', details: { exams: 'GATE for admissions, Research opportunities.', careers: 'R&D Engineer, Technical Lead, Academia, Specialized Engineering Roles.', skills: 'Advanced technical knowledge, research, innovation, specialization.' } },
+                    { id: 'mca', name: 'Master of Computer Applications', details: { exams: 'NIMCET, university-specific entrances.', careers: 'Software Developer, System Analyst, Database Administrator, IT Consultant.', skills: 'Advanced programming, software development, system design.' } },
+                    { id: 'ma', name: 'Master of Arts', details: { exams: 'University entrances, NET/SET for teaching.', careers: 'Teaching, Research, Civil Services, Content Writing, Cultural Organizations.', skills: 'Subject expertise, research, communication, critical analysis.' } },
+                ],
+            },
+            feelings: [
+                { id: 'excited', emoji: '😍', text: 'Super excited! This is my passion!' },
+                { id: 'confident', emoji: '😊', text: 'Confident and ready to take it on!' },
+                { id: 'curious', emoji: '🤔', text: 'Curious to learn more about this field.' },
+                { id: 'uncertain', emoji: '😕', text: 'A bit uncertain, but willing to explore.' },
+                { id: 'pressured', emoji: '😰', text: 'Feeling pressured, but this seems like the best option.' },
+            ],
+            interests: [
+                'Technology & Innovation', 'Creative Arts & Design', 'Business & Entrepreneurship',
+                'Science & Research', 'Health & Medicine', 'Education & Teaching',
+                'Social Service & NGOs', 'Sports & Fitness', 'Travel & Tourism',
+                'Finance & Economics', 'Law & Justice', 'Media & Entertainment',
+                'Environment & Sustainability', 'Politics & Governance', 'Agriculture & Food',
+            ],
+        };
+
+        // --- APPLICATION STATE ---
+        const appState = {
+            currentUser: null, 
+            userData: {}, 
+            userTasks: [], 
+            userTickets: [], 
+            chatHistory: [], 
+            allUsers: [],
+            simulationHistory: [],
+            unsubscribeTasks: null, 
+            unsubscribeTickets: null, 
+            unsubscribeChat: null, 
+            unsubscribeChatHistory: null,
+        };
+
+        // --- AUTHENTICATION FUNCTIONS ---
+        async function handleLogin() {
+            try {
+                const email = document.getElementById('signin-email').value;
+                const password = document.getElementById('signin-password').value;
+                
+                if (!email || !password) {
+                    showNotification('Please fill in all fields', 'error');
+                    return;
+                }
+
+                console.log('Attempting login...');
+                const userCredential = await signInWithEmailAndPassword(getSecureAuth(), email, password);
+                console.log('Login successful:', userCredential.user.uid);
+                
+                showNotification('Login successful!', 'success');
+                await loadUserData();
+                showStep('welcome');
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                let errorMessage = 'Login failed. Please try again.';
+                
+                if (error.code === 'auth/invalid-credential') {
+                    errorMessage = 'Invalid email or password.';
+                } else if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'No account found with this email.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Too many failed attempts. Please try again later.';
+                }
+                
+                showNotification(errorMessage, 'error');
+            }
+        }
+
+        async function handleSignup() {
+            try {
+                const firstName = document.getElementById('signup-first-name').value.trim();
+                const lastName = document.getElementById('signup-last-name').value.trim();
+                const phone = document.getElementById('signup-phone').value.trim();
+                const email = document.getElementById('signup-email').value.trim();
+                const password = document.getElementById('signup-password').value;
+                const role = document.getElementById('signup-role').value;
+
+                if (!firstName || !lastName || !phone || !email || !password || !role) {
+                    showNotification('Please fill in all fields', 'error');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showNotification('Password must be at least 6 characters long', 'error');
+                    return;
+                }
+
+                console.log('Creating user account...');
+                const userCredential = await createUserWithEmailAndPassword(getSecureAuth(), email, password);
+                const user = userCredential.user;
+
+                console.log('Saving user profile...');
+                const userData = {
+                    firstName, lastName, phone, email, role,
+                    createdAt: serverTimestamp(),
+                    completedOnboarding: false,
+                };
+
+                await setDoc(doc(getSecureDB(), 'users', user.uid), userData);
+                appState.currentUser = user;
+                appState.userData = { ...userData, uid: user.uid };
+
+                console.log('Signup successful');
+                showNotification('Account created successfully!', 'success');
+                showStep('onboarding-step1');
+                
+            } catch (error) {
+                console.error('Signup error:', error);
+                let errorMessage = 'Signup failed. Please try again.';
+                
+                if (error.code === 'auth/email-already-in-use') {
+                    errorMessage = 'An account with this email already exists.';
+                } else if (error.code === 'auth/weak-password') {
+                    errorMessage = 'Password is too weak. Please choose a stronger password.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Please enter a valid email address.';
+                }
+                
+                showNotification(errorMessage, 'error');
+            }
+        }
+
+        async function handleGoogleLogin() {
+            try {
+                const googleProvider = new GoogleAuthProvider();
+                const result = await signInWithPopup(getSecureAuth(), googleProvider);
+                const user = result.user;
+                
+                console.log('Google login successful');
+                
+                // Check if user profile exists
+                const userDoc = await getDoc(doc(getSecureDB(), 'users', user.uid));
+                
+                if (!userDoc.exists()) {
+                    // Create profile for new Google user
+                    const userData = {
+                        firstName: user.displayName?.split(' ')[0] || 'User',
+                        lastName: user.displayName?.split(' ').slice(1).join(' ') || '',
+                        email: user.email,
+                        photoURL: user.photoURL,
+                        role: 'student', // Default role
+                        createdAt: serverTimestamp(),
+                        completedOnboarding: false,
+                    };
+                    
+                    await setDoc(doc(getSecureDB(), 'users', user.uid), userData);
+                    appState.userData = { ...userData, uid: user.uid };
+                    showStep('onboarding-step1');
+                } else {
+                    appState.userData = { uid: user.uid, ...userDoc.data() };
+                    await loadUserData();
+                    showStep('welcome');
+                }
+                
+                appState.currentUser = user;
+                showNotification('Welcome back!', 'success');
+                
+            } catch (error) {
+                console.error('Google login error:', error);
+                showNotification('Google login failed. Please try again.', 'error');
+            }
+        }
+
+        // --- NAVIGATION FUNCTIONS ---
+        function showStep(stepId) {
+            try {
+                // Hide all steps
+                const allSteps = document.querySelectorAll('[data-step]');
+                allSteps.forEach(step => step.classList.add('hidden'));
+
+                // Show target step
+                const targetStep = document.querySelector(`[data-step="${stepId}"]`);
+                if (targetStep) {
+                    targetStep.classList.remove('hidden');
+                    console.log(`Switched to step: ${stepId}`);
+                    
+                    // Update URL hash for navigation
+                    window.location.hash = stepId;
+                    
+                    // Scroll to top of the step
+                    targetStep.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                } else {
+                    console.error(`Step not found: ${stepId}`);
+                }
+            } catch (error) {
+                console.error('Error switching steps:', error);
+            }
+        }
+
+        function nextStep() {
+            // Get current step and navigate to next
+            const currentStep = document.querySelector('[data-step]:not(.hidden)');
+            if (!currentStep) return;
+            
+            const currentStepId = currentStep.getAttribute('data-step');
+            
+            // Define step progression logic
+            const stepFlow = {
+                'welcome': 'onboarding-step1',
+                'onboarding-step1': 'onboarding-step2',
+                'onboarding-step2': 'onboarding-step3',
+                'onboarding-step3': 'onboarding-step4',
+                'onboarding-step4': 'onboarding-step5',
+                'onboarding-step5': 'career-path',
+                'career-path': 'simulation',
+                // Add more as needed
+            };
+            
+            const nextStepId = stepFlow[currentStepId];
+            if (nextStepId) {
+                showStep(nextStepId);
+            }
+        }
+
+        function previousStep() {
+            // Get current step and navigate to previous
+            const currentStep = document.querySelector('[data-step]:not(.hidden)');
+            if (!currentStep) return;
+            
+            const currentStepId = currentStep.getAttribute('data-step');
+            
+            // Define reverse step progression
+            const reverseStepFlow = {
+                'onboarding-step2': 'onboarding-step1',
+                'onboarding-step3': 'onboarding-step2',
+                'onboarding-step4': 'onboarding-step3',
+                'onboarding-step5': 'onboarding-step4',
+                'career-path': 'onboarding-step5',
+                'simulation': 'career-path',
+                // Add more as needed
+            };
+            
+            const prevStepId = reverseStepFlow[currentStepId];
+            if (prevStepId) {
+                showStep(prevStepId);
+            }
+        }
+
+        // --- ONBOARDING SELECTION FUNCTIONS ---
+        function selectClass(classId) {
+            try {
+                // Update UI selection
+                document.querySelectorAll('.class-option').forEach(el => el.classList.remove('selected'));
+                document.querySelector(`[data-class="${classId}"]`).classList.add('selected');
+                
+                // Store selection
+                appState.userData.class = classId;
+                console.log('Selected class:', classId);
+                
+                // Enable next button
+                const nextBtn = document.querySelector('#onboarding-step1 .next-btn');
+                if (nextBtn) nextBtn.disabled = false;
+                
+                // Update streams for next step
+                updateStreamsForClass(classId);
+                
+            } catch (error) {
+                console.error('Error selecting class:', error);
+            }
+        }
+
+        function selectStream(streamId) {
+            try {
+                // Update UI selection
+                document.querySelectorAll('.stream-option').forEach(el => el.classList.remove('selected'));
+                document.querySelector(`[data-stream="${streamId}"]`).classList.add('selected');
+                
+                // Store selection
+                appState.userData.stream = streamId;
+                console.log('Selected stream:', streamId);
+                
+                // Enable next button
+                const nextBtn = document.querySelector('#onboarding-step2 .next-btn');
+                if (nextBtn) nextBtn.disabled = false;
+                
+            } catch (error) {
+                console.error('Error selecting stream:', error);
+            }
+        }
+
+        function selectFeeling(feelingId) {
+            try {
+                // Update UI selection
+                document.querySelectorAll('.feeling-option').forEach(el => el.classList.remove('selected'));
+                document.querySelector(`[data-feeling="${feelingId}"]`).classList.add('selected');
+                
+                // Store selection
+                appState.userData.feeling = feelingId;
+                console.log('Selected feeling:', feelingId);
+                
+                // Enable next button
+                const nextBtn = document.querySelector('#onboarding-step3 .next-btn');
+                if (nextBtn) nextBtn.disabled = false;
+                
+            } catch (error) {
+                console.error('Error selecting feeling:', error);
+            }
+        }
+
+        function selectInterests() {
+            try {
+                const selectedInterests = [];
+                document.querySelectorAll('.interest-option.selected').forEach(el => {
+                    selectedInterests.push(el.textContent.trim());
+                });
+                
+                appState.userData.interests = selectedInterests;
+                console.log('Selected interests:', selectedInterests);
+                
+                // Enable next button if at least one interest is selected
+                const nextBtn = document.querySelector('#onboarding-step4 .next-btn');
+                if (nextBtn) nextBtn.disabled = selectedInterests.length === 0;
+                
+            } catch (error) {
+                console.error('Error selecting interests:', error);
+            }
+        }
+
+        // --- HELPER FUNCTIONS ---
+        function updateStreamsForClass(classId) {
+            const streamsContainer = document.querySelector('#streams-container');
+            if (!streamsContainer) return;
+            
+            const streams = careerData.streams[classId] || [];
+            
+            streamsContainer.innerHTML = streams.map(stream => `
+                <div class="stream-option bg-white rounded-xl p-6 border-2 border-gray-200 hover:border-blue-400 cursor-pointer transition-all duration-200" 
+                    data-stream="${stream.id}" onclick="selectStream('${stream.id}')">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-2">${stream.name}</h3>
+                    <div class="text-sm text-gray-600">
+                        <p><strong>Exams:</strong> ${stream.details.exams}</p>
+                        <p><strong>Careers:</strong> ${stream.details.careers}</p>
+                        <p><strong>Skills:</strong> ${stream.details.skills}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // --- AI CAREER PATH GENERATION ---
+        async function generateCareerPath() {
+            try {
+                const container = document.getElementById('career-path-content');
+                if (!container) return;
+                
+                container.innerHTML = `
+                    <div class="flex items-center justify-center p-8">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500 mr-3"></div>
+                        <span>Generating your personalized career path...</span>
+                    </div>
+                `;
+                
+                const { class: classId, stream, feeling, interests } = appState.userData;
+                const classInfo = careerData.classes.find(c => c.id === classId);
+                const streamInfo = careerData.streams[classId]?.find(s => s.id === stream);
+                const feelingInfo = careerData.feelings.find(f => f.id === feeling);
+                
+                const prompt = `Generate a comprehensive career path analysis for a student with the following profile:
+                
+                Academic Stage: ${classInfo?.name}
+                Stream: ${streamInfo?.name}
+                Feeling about path: ${feelingInfo?.text}
+                Interests: ${interests?.join(', ')}
+                
+                Please provide a detailed analysis including:
+                1. Career opportunities specific to this profile
+                2. Recommended next steps and milestones
+                3. Skills to develop
+                4. Potential challenges and how to overcome them
+                5. Timeline and action plan
+                
+                Format the response as a comprehensive career roadmap.`;
+                
+                const systemInstruction = `You are an expert career counselor providing personalized guidance to students. Provide practical, actionable advice formatted as a well-structured career roadmap. Be encouraging and specific to the student's profile.`;
+                
+                const response = await callGeminiAPI(prompt, systemInstruction);
+                
+                if (response) {
+                    displayCareerPath(response);
+                } else {
+                    container.innerHTML = `
+                        <div class="text-center text-red-400 p-4">
+                            Failed to generate career path. Please try again.
+                            <button onclick="generateCareerPath()" class="block mx-auto mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+                                Try Again
+                            </button>
+                        </div>
+                    `;
+                }
+                
+            } catch (error) {
+                console.error('Error generating career path:', error);
+                showNotification('Failed to generate career path', 'error');
+            }
+        }
+
+        function displayCareerPath(pathData) {
+            const container = document.getElementById('career-path-content');
+            if (!container) return;
+            
+            // Display the AI-generated career path
+            container.innerHTML = `
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-6 mb-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">🎯 Your Personalized Career Roadmap</h3>
+                    <div class="prose max-w-none">
+                        ${formatCareerPathContent(pathData)}
+                    </div>
+                </div>
+                
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <button onclick="startSimulation()" class="bg-purple-500 hover:bg-purple-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors">
+                        🎮 Experience Your Future
+                        <p class="text-sm font-normal mt-1">Try our AI simulation</p>
+                    </button>
+                    
+                    <button onclick="showStep('progress')" class="bg-green-500 hover:bg-green-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors">
+                        📊 Track Your Progress
+                        <p class="text-sm font-normal mt-1">Set goals and milestones</p>
+                    </button>
+                    
+                    <button onclick="showStep('community')" class="bg-orange-500 hover:bg-orange-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors">
+                        🤝 Connect & Grow
+                        <p class="text-sm font-normal mt-1">Talk to peers and mentors</p>
+                    </button>
+                    
+                    <button onclick="showStep('interview-prep')" class="bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-6 rounded-lg transition-colors">
+                        💼 Prepare for Future
+                        <p class="text-sm font-normal mt-1">Practice interview questions</p>
+                    </button>
+                </div>
+            `;
+        }
+
+        function formatCareerPathContent(content) {
+            // Format the AI response for better display
+            if (typeof content === 'object' && content.content) {
+                return content.content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            } else if (typeof content === 'string') {
+                return content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            }
+            return 'Career path generated successfully!';
+        }
+
+        // --- SIMULATION FUNCTIONS ---
+        async function startSimulation() {
+            try {
+                showStep('simulation');
+                
+                const { class: classId, stream } = appState.userData;
+                const streamInfo = careerData.streams[classId]?.find(s => s.id === stream);
+                
+                if (!streamInfo) {
+                    showNotification('Please complete your profile first', 'error');
+                    return;
+                }
+                
+                const prompt = `Create an immersive "day in the life" simulation for a professional in ${streamInfo.name}. 
+                
+                Structure it as an interactive story with:
+                1. Morning routine and preparation
+                2. Key tasks and challenges throughout the day
+                3. Decision points where the user can choose how to respond
+                4. Realistic scenarios they would face
+                5. Skills being used and developed
+                
+                Make it engaging and educational, showing both the exciting and challenging aspects of this career path.`;
+                
+                const systemInstruction = `Create an interactive career simulation that helps students understand what a typical day looks like in their chosen field. Make it realistic, engaging, and educational.`;
+                
+                const response = await callGeminiAPI(prompt, systemInstruction);
+                
+                if (response) {
+                    renderSimulationStep(response, 0);
+                } else {
+                    showNotification('Failed to start simulation', 'error');
+                }
+                
+            } catch (error) {
+                console.error('Error starting simulation:', error);
+                showNotification('Failed to start simulation', 'error');
+            }
+        }
+
+        function renderSimulationStep(simulationData, stepIndex = 0) {
+            const container = document.getElementById('simulation-content');
+            if (!container) return;
+            
+            // Parse simulation data and render current step
+            container.innerHTML = `
+                <div class="bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl p-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">🎮 Career Simulation</h3>
+                    <div class="simulation-content">
+                        ${formatSimulationContent(simulationData)}
+                    </div>
+                    
+                    <div class="flex gap-4 mt-6">
+                        <button onclick="continueSimulation()" class="bg-purple-500 hover:bg-purple-600 text-white px-6 py-2 rounded-lg">
+                            Continue Simulation
+                        </button>
+                        <button onclick="showStep('career-path')" class="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg">
+                            Back to Career Path
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function formatSimulationContent(content) {
+            // Format simulation content for display
+            if (typeof content === 'object' && content.content) {
+                return content.content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            } else if (typeof content === 'string') {
+                return content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            }
+            return 'Simulation step loaded successfully!';
+        }
+
+        function continueSimulation() {
+            // Continue to next simulation step
+            showNotification('Simulation continued!', 'info');
+        }
+
+        // --- TASK MANAGEMENT ---
+        async function addTask() {
+            try {
+                const taskInput = document.getElementById('new-task-input');
+                const taskText = taskInput?.value.trim();
+                
+                if (!taskText) {
+                    showNotification('Please enter a task', 'error');
+                    return;
+                }
+                
+                if (!appState.currentUser) {
+                    showNotification('Please sign in to add tasks', 'error');
+                    return;
+                }
+                
+                const taskData = {
+                    text: taskText,
+                    completed: false,
+                    createdAt: serverTimestamp(),
+                    userId: appState.currentUser.uid,
+                };
+                
+                const docRef = await addDoc(collection(getSecureDB(), `users/${appState.currentUser.uid}/tasks`), taskData);
+                console.log('Task added:', docRef.id);
+                
+                taskInput.value = '';
+                showNotification('Task added successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error adding task:', error);
+                showNotification('Failed to add task', 'error');
+            }
+        }
+
+        async function deleteTask(taskId) {
+            try {
+                if (!appState.currentUser) {
+                    showNotification('Please sign in to delete tasks', 'error');
+                    return;
+                }
+                
+                await deleteDoc(doc(getSecureDB(), `users/${appState.currentUser.uid}/tasks`, taskId));
+                console.log('Task deleted:', taskId);
+                showNotification('Task deleted successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error deleting task:', error);
+                showNotification('Failed to delete task', 'error');
+            }
+        }
+
+        async function toggleTask(taskId, completed) {
+            try {
+                if (!appState.currentUser) return;
+                
+                await updateDoc(doc(getSecureDB(), `users/${appState.currentUser.uid}/tasks`, taskId), {
+                    completed: completed
+                });
+                
+                console.log('Task updated:', taskId);
+                
+            } catch (error) {
+                console.error('Error updating task:', error);
+                showNotification('Failed to update task', 'error');
+            }
+        }
+
+        // --- TICKET SYSTEM ---
+        async function submitTicket() {
+            try {
+                const subject = document.getElementById('ticket-subject')?.value.trim();
+                const description = document.getElementById('ticket-description')?.value.trim();
+                const priority = document.getElementById('ticket-priority')?.value;
+                
+                if (!subject || !description) {
+                    showNotification('Please fill in all fields', 'error');
+                    return;
+                }
+                
+                if (!appState.currentUser) {
+                    showNotification('Please sign in to submit tickets', 'error');
+                    return;
+                }
+                
+                const ticketData = {
+                    subject,
+                    description,
+                    priority: priority || 'medium',
+                    status: 'open',
+                    createdAt: serverTimestamp(),
+                    userId: appState.currentUser.uid,
+                    userEmail: appState.currentUser.email,
+                };
+                
+                const docRef = await addDoc(collection(getSecureDB(), 'tickets'), ticketData);
+                console.log('Ticket submitted:', docRef.id);
+                
+                // Clear form
+                document.getElementById('ticket-subject').value = '';
+                document.getElementById('ticket-description').value = '';
+                document.getElementById('ticket-priority').value = 'medium';
+                
+                showNotification('Ticket submitted successfully! We\'ll get back to you soon.', 'success');
+                
+            } catch (error) {
+                console.error('Error submitting ticket:', error);
+                showNotification('Failed to submit ticket', 'error');
+            }
+        }
+
+        // --- CHAT SYSTEM ---
+        let chatInitialized = false;
+
+        async function initializeChatbot() {
+            if (chatInitialized) return;
+            
+            try {
+                console.log('Initializing chatbot...');
+                chatInitialized = true;
+                
+                // Add welcome message
+                addChatMessage('AI Career Counselor', 'Hello! I\'m here to help guide your career journey. Feel free to ask me anything about your career path, education, or professional development!', 'ai');
+                
+            } catch (error) {
+                console.error('Error initializing chatbot:', error);
+                chatInitialized = false;
+            }
+        }
+
+        async function sendMessage() {
+            try {
+                const chatInput = document.getElementById('chat-input');
+                const message = chatInput?.value.trim();
+                
+                if (!message) return;
+                
+                // Add user message
+                addChatMessage('You', message, 'user');
+                chatInput.value = '';
+                
+                // Show loading indicator
+                document.getElementById('chat-loader')?.classList.remove('hidden');
+                
+                // Prepare context
+                const userProfile = appState.userData;
+                const systemInstruction = `You are an expert AI career counselor helping students with their career development. 
+                
+                Student Profile:
+                - Academic Stage: ${userProfile.class || 'Not specified'}
+                - Stream: ${userProfile.stream || 'Not specified'}  
+                - Interests: ${userProfile.interests?.join(', ') || 'Not specified'}
+                - Feeling about path: ${userProfile.feeling || 'Not specified'}
+                
+                Provide helpful, personalized career guidance based on this profile. Be encouraging, specific, and actionable.`;
+                
+                const response = await callGeminiAPI(message, systemInstruction);
+                
+                document.getElementById('chat-loader')?.classList.add('hidden');
+                
+                const aiReplyText = response?.content || response?.reply || "I'm here to help with your career questions!";
+                
+                // Add AI response
+                addChatMessage('AI Career Counselor', aiReplyText, 'ai');
+                
+                // Save to chat history if user is logged in
+                if (appState.currentUser) {
+                    await addDoc(collection(getSecureDB(), `users/${appState.currentUser.uid}/chatHistory`), {
+                        userMessage: message,
+                        aiResponse: aiReplyText,
+                        timestamp: serverTimestamp(),
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                document.getElementById('chat-loader')?.classList.add('hidden');
+                addChatMessage('AI Career Counselor', 'Sorry, I\'m having trouble connecting right now. Please try again.', 'ai');
+            }
+        }
+
+        function addChatMessage(sender, message, type) {
+            const chatMessages = document.getElementById('chat-messages');
+            if (!chatMessages) return;
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `flex ${type === 'user' ? 'justify-end' : 'justify-start'} mb-4`;
+            
+            const sanitizedMessage = String(message)
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/\n/g, '<br>');
+            
+            messageDiv.innerHTML = `
+                <div class="max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                    type === 'user' 
+                        ? 'bg-blue-500 text-white' 
+                        : 'bg-gray-200 text-gray-800'
+                }">
+                    <p class="text-sm font-medium mb-1">${sender}</p>
+                    <p class="text-sm">${sanitizedMessage}</p>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        // --- PROFILE MANAGEMENT ---
+        async function uploadProfileImage() {
+            try {
+                const fileInput = document.getElementById('profile-image-input');
+                const file = fileInput?.files[0];
+                
+                if (!file) {
+                    showNotification('Please select an image', 'error');
+                    return;
+                }
+                
+                if (!appState.currentUser) {
+                    showNotification('Please sign in to upload images', 'error');
+                    return;
+                }
+                
+                if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                    showNotification('Image size must be less than 5MB', 'error');
+                    return;
+                }
+                
+                console.log('Uploading profile image...');
+                const storageRef = ref(getSecureStorage(), `profile-images/${appState.currentUser.uid}/${Date.now()}_${file.name}`);
+                
+                const snapshot = await uploadBytes(storageRef, file);
+                const downloadURL = await getDownloadURL(snapshot.ref);
+                
+                // Update user profile with new image URL
+                await updateDoc(doc(getSecureDB(), 'users', appState.currentUser.uid), {
+                    photoURL: downloadURL
+                });
+                
+                appState.userData.photoURL = downloadURL;
+                
+                // Update UI
+                const profileImg = document.getElementById('profile-img');
+                if (profileImg) {
+                    profileImg.src = downloadURL;
+                }
+                
+                console.log('Profile image uploaded successfully');
+                showNotification('Profile image updated successfully!', 'success');
+                
+            } catch (error) {
+                console.error('Error uploading image:', error);
+                showNotification('Failed to upload image', 'error');
+            }
+        }
+
+        function handleImageChange(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const previewImg = document.getElementById('profile-img-preview');
+                if (previewImg) {
+                    previewImg.src = e.target.result;
+                }
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // --- DATA MANAGEMENT ---
+        async function loadUserData() {
+            try {
+                if (!appState.currentUser) return;
+                
+                console.log('Loading user data...');
+                const userDoc = await getDoc(doc(getSecureDB(), 'users', appState.currentUser.uid));
+                
+                if (userDoc.exists()) {
+                    appState.userData = { uid: appState.currentUser.uid, ...userDoc.data() };
+                    console.log('User data loaded:', appState.userData);
+                    
+                    // Update profile display
+                    updateProfileDisplay();
+                    
+                    // Set up real-time listeners
+                    setupRealtimeListeners();
+                }
+                
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        async function saveUserData() {
+            try {
+                if (!appState.currentUser || !appState.userData) return;
+                
+                console.log('Saving user data...');
+                await updateDoc(doc(getSecureDB(), 'users', appState.currentUser.uid), {
+                    ...appState.userData,
+                    lastUpdated: serverTimestamp(),
+                });
+                
+                console.log('User data saved successfully');
+                
+            } catch (error) {
+                console.error('Error saving user data:', error);
+                showNotification('Failed to save data', 'error');
+            }
+        }
+
+        function updateProfileDisplay() {
+            try {
+                const { firstName, lastName, photoURL, class: userClass, stream } = appState.userData;
+                
+                // Update name displays
+                const nameElements = document.querySelectorAll('.user-name');
+                nameElements.forEach(el => {
+                    el.textContent = `${firstName || ''} ${lastName || ''}`.trim() || 'User';
+                });
+                
+                // Update profile images
+                const imgElements = document.querySelectorAll('.profile-img');
+                imgElements.forEach(el => {
+                    el.src = photoURL || '/default-avatar.png';
+                });
+                
+                // Update profile info
+                if (userClass) {
+                    const classInfo = careerData.classes.find(c => c.id === userClass);
+                    const classElements = document.querySelectorAll('.user-class');
+                    classElements.forEach(el => {
+                        el.textContent = classInfo?.name || userClass;
+                    });
+                }
+                
+                if (stream && userClass) {
+                    const streamInfo = careerData.streams[userClass]?.find(s => s.id === stream);
+                    const streamElements = document.querySelectorAll('.user-stream');
+                    streamElements.forEach(el => {
+                        el.textContent = streamInfo?.name || stream;
+                    });
+                }
+                
+            } catch (error) {
+                console.error('Error updating profile display:', error);
+            }
+        }
+
+        function setupRealtimeListeners() {
+            try {
+                if (!appState.currentUser) return;
+                
+                // Clean up existing listeners
+                cleanupListeners();
+                
+                const userId = appState.currentUser.uid;
+                
+                // Listen to tasks
+                appState.unsubscribeTasks = onSnapshot(
+                    query(collection(getSecureDB(), `users/${userId}/tasks`), orderBy('createdAt', 'desc')),
+                    (snapshot) => {
+                        appState.userTasks = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        updateTasksDisplay();
+                    }
+                );
+                
+                // Listen to tickets
+                appState.unsubscribeTickets = onSnapshot(
+                    query(collection(getSecureDB(), `users/${userId}/tickets`), orderBy('createdAt', 'desc')),
+                    (snapshot) => {
+                        appState.userTickets = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                        updateTicketsDisplay();
+                    }
+                );
+                
+                // Listen to chat history
+                appState.unsubscribeChatHistory = onSnapshot(
+                    query(collection(getSecureDB(), `users/${userId}/chatHistory`), orderBy('timestamp', 'desc')),
+                    (snapshot) => {
+                        appState.chatHistory = snapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data()
+                        }));
+                    }
+                );
+                
+                console.log('Real-time listeners set up successfully');
+                
+            } catch (error) {
+                console.error('Error setting up listeners:', error);
+            }
+        }
+
+        function cleanupListeners() {
+            if (appState.unsubscribeTasks) {
+                appState.unsubscribeTasks();
+                appState.unsubscribeTasks = null;
+            }
+            if (appState.unsubscribeTickets) {
+                appState.unsubscribeTickets();
+                appState.unsubscribeTickets = null;
+            }
+            if (appState.unsubscribeChat) {
+                appState.unsubscribeChat();
+                appState.unsubscribeChat = null;
+            }
+            if (appState.unsubscribeChatHistory) {
+                appState.unsubscribeChatHistory();
+                appState.unsubscribeChatHistory = null;
+            }
+        }
+
+        function updateTasksDisplay() {
+            const tasksContainer = document.getElementById('tasks-container');
+            if (!tasksContainer) return;
+            
+            if (appState.userTasks.length === 0) {
+                tasksContainer.innerHTML = `
+                    <div class="text-center text-gray-500 p-4">
+                        <p>No tasks yet. Add your first task to get started!</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            tasksContainer.innerHTML = appState.userTasks.map(task => `
+                <div class="flex items-center justify-between bg-white p-4 rounded-lg border ${task.completed ? 'opacity-50' : ''}">
+                    <div class="flex items-center">
+                        <input type="checkbox" ${task.completed ? 'checked' : ''} 
+                            onchange="toggleTask('${task.id}', this.checked)"
+                            class="mr-3 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                        <span class="${task.completed ? 'line-through text-gray-500' : 'text-gray-800'}">${task.text}</span>
+                    </div>
+                    <button onclick="deleteTask('${task.id}')" class="text-red-500 hover:text-red-700">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function updateTicketsDisplay() {
+            const ticketsContainer = document.getElementById('tickets-container');
+            if (!ticketsContainer) return;
+            
+            if (appState.userTickets.length === 0) {
+                ticketsContainer.innerHTML = `
+                    <div class="text-center text-gray-500 p-4">
+                        <p>No support tickets yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            ticketsContainer.innerHTML = appState.userTickets.map(ticket => `
+                <div class="bg-white p-4 rounded-lg border">
+                    <div class="flex items-center justify-between mb-2">
+                        <h4 class="font-semibold text-gray-800">${ticket.subject}</h4>
+                        <span class="px-2 py-1 text-xs rounded-full ${getTicketStatusClass(ticket.status)}">
+                            ${ticket.status.toUpperCase()}
+                        </span>
+                    </div>
+                    <p class="text-gray-600 text-sm mb-2">${ticket.description}</p>
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span>Priority: ${ticket.priority}</span>
+                        <span>${formatDate(ticket.createdAt)}</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getTicketStatusClass(status) {
+            switch (status) {
+                case 'open': return 'bg-yellow-100 text-yellow-800';
+                case 'in-progress': return 'bg-blue-100 text-blue-800';
+                case 'resolved': return 'bg-green-100 text-green-800';
+                case 'closed': return 'bg-gray-100 text-gray-800';
+                default: return 'bg-gray-100 text-gray-800';
+            }
+        }
+
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Unknown';
+            
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+
+        // --- GLOBAL ERROR HANDLING FOR SECURITY ---
+        window.addEventListener('error', (event) => {
+            console.error('Global error caught:', event.error);
+            const userMessage = 'An unexpected error occurred. Please refresh the page and try again.';
+            showNotification(userMessage, 'error');
+            event.preventDefault();
+        });
+
+        window.addEventListener('unhandledrejection', (event) => {
+            console.error('Unhandled promise rejection:', event.reason);
+            const userMessage = 'A network error occurred. Please check your connection and try again.';
+            showNotification(userMessage, 'error');
+            event.preventDefault();
+        });
+
+        // --- INITIALIZE APPLICATION SECURELY ---
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                console.log('🚀 Starting Career Friend application...');
+
+                // Initialize Firebase securely
+                const firebase = await initializeSecureFirebase();
+                if (!firebase) {
+                    throw new Error('Failed to initialize application');
+                }
+
+                // Create Google auth provider
+                const googleProvider = new GoogleAuthProvider();
+
+                console.log('✅ Application initialized successfully with secure configuration');
+                showNotification('Application loaded successfully!', 'success', 3000);
+
+                // Set up authentication state listener
+                onAuthStateChanged(getSecureAuth(), async (user) => {
+                    if (user) {
+                        appState.currentUser = user;
+                        console.log('User signed in:', user.uid);
+                        await loadUserData();
+                        
+                        if (!appState.userData.completedOnboarding) {
+                            showStep('onboarding-step1');
+                        } else {
+                            showStep('welcome');
+                        }
+                    } else {
+                        appState.currentUser = null;
+                        appState.userData = {};
+                        cleanupListeners();
+                        console.log('User signed out');
+                        showStep('landing');
+                    }
+                });
+
+                // Initialize chat if on chat page
+                if (window.location.hash === '#chat' || document.getElementById('chat-messages')) {
+                    await initializeChatbot();
+                }
+
+                // Set up keyboard shortcuts
+                document.addEventListener('keydown', (event) => {
+                    // Enter key in chat input
+                    if (event.target.id === 'chat-input' && event.key === 'Enter') {
+                        event.preventDefault();
+                        sendMessage();
+                    }
+                    
+                    // Enter key in task input
+                    if (event.target.id === 'new-task-input' && event.key === 'Enter') {
+                        event.preventDefault();
+                        addTask();
+                    }
+                });
+
+                // Handle browser back/forward navigation
+                window.addEventListener('hashchange', () => {
+                    const hash = window.location.hash.slice(1);
+                    if (hash && document.querySelector(`[data-step="${hash}"]`)) {
+                        showStep(hash);
+                    }
+                });
+
+                // Show initial step based on URL hash or default
+                const initialStep = window.location.hash.slice(1) || 'landing';
+                if (document.querySelector(`[data-step="${initialStep}"]`)) {
+                    showStep(initialStep);
+                } else {
+                    showStep('landing');
+                }
+
+            } catch (error) {
+                console.error('❌ Application initialization failed:', error);
+                showNotification('Failed to start application. Please refresh the page.', 'error');
+            }
+        });
+
+        // --- MAKE FUNCTIONS GLOBALLY AVAILABLE FOR HTML ONCLICK HANDLERS ---
+        window.showStep = showStep;
+        window.nextStep = nextStep;
+        window.previousStep = previousStep;
+        window.selectClass = selectClass;
+        window.selectStream = selectStream;
+        window.selectFeeling = selectFeeling;
+        window.selectInterests = selectInterests;
+        window.handleLogin = handleLogin;
+        window.handleSignup = handleSignup;
+        window.handleGoogleLogin = handleGoogleLogin;
+        window.generateCareerPath = generateCareerPath;
+        window.startSimulation = startSimulation;
+        window.continueSimulation = continueSimulation;
+        window.renderSimulationStep = renderSimulationStep;
+        window.addTask = addTask;
+        window.deleteTask = deleteTask;
+        window.toggleTask = toggleTask;
+        window.submitTicket = submitTicket;
+        window.sendMessage = sendMessage;
+        window.initializeChatbot = initializeChatbot;
+        window.uploadProfileImage = uploadProfileImage;
+        window.handleImageChange = handleImageChange;
+        window.loadUserData = loadUserData;
+        window.saveUserData = saveUserData;
+        window.callGeminiAPI = callGeminiAPI;
+        window.showNotification = showNotification;
+
+        console.log('🎉 Career Friend application ready with all features and secure configuration!');
+
+</script>
+</body>
+</html>
+
+
+
+
+
